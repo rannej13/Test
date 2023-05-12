@@ -4,7 +4,7 @@
 // const csvFilePath = 'https://github.com/rannej13/Test/blob/main/SchoolResultsAberdeen.csv';
 
 // Fetch the CSV file using the Fetch API
-    Papa.parse("SchoolResultsAberdeen.csv", {
+    Papa.parse("https://github.com/rannej13/Test/blob/master/SchoolProject2/SchoolResultsAberdeen.csv", {
       download: true,
       header: true,
       dynamicTyping: true,
