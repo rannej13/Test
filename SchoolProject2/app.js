@@ -75,7 +75,7 @@
 						labels: data.map(row => row['Reference Establishment']),
 						datasets: [{
 							label: 'Academic Year 2021-22',
-							data: data.map(row => row['Academic Year 2021-22']),
+							data: data.map(row => row['Academic year 2021-22']),
 							backgroundColor: 'rgba(255, 99, 132, 0.2)',
 							borderColor: 'rgba(255, 99, 132, 1)',
 							borderWidth: 1
