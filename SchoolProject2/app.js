@@ -1,6 +1,6 @@
 window.onload = function() {
   // Fetch the CSV file using the Fetch API
-  fetch('https://cors-anywhere.herokuapp.com/https://github.com/rannej13/Test/blob/master/SchoolProject2/SchoolResultsAberdeen.csv')
+  fetch('https://github.com/rannej13/Test/blob/master/SchoolProject2/SchoolResultsAberdeen.csv')
     .then(response => response.text())
     .then(data => {
       // Parse the CSV data using Papa Parse
