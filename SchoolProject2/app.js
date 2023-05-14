@@ -44,67 +44,153 @@
 
 
 		// Fetch CSV file
-		fetch('https://github.com/rannej13/Test/blob/master/SchoolProject2/SchoolResultsAberdeen.csv')
+// 		fetch('https://github.com/rannej13/Test/blob/master/SchoolProject2/SchoolResultsAberdeen.csv')
+// 			.then(response => response.text())
+// 			.then(csv => {
+// 				// Parse CSV data
+// 				const data = Papa.parse(csv, { header: true }).data;
+				
+// 				// Get all establishments from CSV data
+// 				const establishments = data.reduce((acc, row) => {
+// 					if (!acc.includes(row['Reference Establishment'])) {
+// 						acc.push(row['Reference Establishment']);
+// 					}
+// 					return acc;
+// 				}, []);
+				
+// 				// Populate establishment filter
+// 				const establishmentFilter = document.getElementById('establishment-filter');
+// 				establishments.forEach(establishment => {
+// 					const option = document.createElement('option');
+// 					option.value = establishment;
+// 					option.text = establishment;
+// 					establishmentFilter.add(option);
+// 				});
+				
+// 				// Initialize chart with all data
+// 				const ctx = document.getElementById('chart').getContext('2d');
+// 				const chart = new Chart(ctx, {
+// 					type: 'bar',
+// 					data: {
+// 						labels: data.map(row => row['Reference Establishment']),
+// 						datasets: [{
+// 							label: 'Academic Year 2021-22',
+// 							data: data.map(row => row['Academic year 2021-22']),
+// 							backgroundColor: 'rgba(255, 99, 132, 0.2)',
+// 							borderColor: 'rgba(255, 99, 132, 1)',
+// 							borderWidth: 1
+// 						}]
+// 					},
+// 					options: {
+// 						scales: {
+// 							yAxes: [{
+// 								ticks: {
+// 									beginAtZero: true
+// 								}
+// 							}]
+// 						}
+// 					}
+// 				});
+				
+// 				// Update chart data based on establishment filter
+// 				establishmentFilter.addEventListener('change', () => {
+// 					const selectedEstablishments = Array.from(establishmentFilter.selectedOptions)
+// 						.map(option => option.value);
+// 					const filteredData = data.filter(row => selectedEstablishments.includes(row['Reference Establishment']));
+// 					chart.data.labels = filteredData.map(row => row['Reference Establishment']);
+// 					chart.data.datasets[0].data = filteredData.map(row => row['Academic Year 2021-22']);
+// 					chart.update();
+// 				});
+// 			})
+// 			.catch(error => console.error(error));
+
+		// Fetch CSV data
+		fetch('file:///C:/Users/username/Desktop/data.csv')
 			.then(response => response.text())
-			.then(csv => {
-				// Parse CSV data
-				const data = Papa.parse(csv, { header: true }).data;
-				
-				// Get all establishments from CSV data
-				const establishments = data.reduce((acc, row) => {
-					if (!acc.includes(row['Reference Establishment'])) {
-						acc.push(row['Reference Establishment']);
-					}
-					return acc;
-				}, []);
-				
-				// Populate establishment filter
-				const establishmentFilter = document.getElementById('establishment-filter');
+			.then(csvData => {
+				// Parse CSV data with Papa Parse
+				const parsedData = Papa.parse(csvData, { header: true }).data;
+
+				// Get unique establishments
+				const establishments = [...new Set(parsedData.map(row => row['Reference Establishment']))];
+
+				// Create filter options
+				const filterSelect = document.getElementById('establishment-filter');
 				establishments.forEach(establishment => {
 					const option = document.createElement('option');
-					option.value = establishment;
 					option.text = establishment;
-					establishmentFilter.add(option);
+					filterSelect.add(option);
 				});
-				
-				// Initialize chart with all data
-				const ctx = document.getElementById('chart').getContext('2d');
-				const chart = new Chart(ctx, {
+
+				// Initialize chart data
+				const chartData = {
+					labels: [],
+					datasets: []
+				};
+
+				// Loop through establishments
+				establishments.forEach((establishment, index) => {
+					// Filter data by establishment
+					const establishmentData = parsedData.filter(row => row['Reference Establishment'] === establishment);
+
+					// Extract academic year data
+					const academicYearData = establishmentData.map(row => {
+						let academicYear = parseFloat(row['Academic year 2021-22']);
+						if (isNaN(academicYear)) {
+							academicYear = 0;
+						}
+						return academicYear;
+					});
+
+					// Add data to chart data
+					chartData.labels.push(establishment);
+					chartData.datasets.push({
+						label: establishment,
+						data: academicYearData,
+						backgroundColor: `rgba(${255 - (index * 40)}, ${index * 40}, 0, 0.5)`,
+						borderColor: `rgba(${255 - (index * 40)}, ${index * 40}, 0, 1)`,
+						borderWidth: 1
+					});
+				});
+
+				// Create chart
+				const chart = new Chart('chart', {
 					type: 'bar',
-					data: {
-						labels: data.map(row => row['Reference Establishment']),
-						datasets: [{
-							label: 'Academic Year 2021-22',
-							data: data.map(row => row['Academic year 2021-22']),
-							backgroundColor: 'rgba(255, 99, 132, 0.2)',
-							borderColor: 'rgba(255, 99, 132, 1)',
-							borderWidth: 1
-						}]
-					},
+					data: chartData,
 					options: {
+						responsive: true,
 						scales: {
-							yAxes: [{
-								ticks: {
-									beginAtZero: true
-								}
-							}]
+							x: {
+								stacked: true
+							},
+							y: {
+								stacked: true
+							}
 						}
 					}
 				});
-				
-				// Update chart data based on establishment filter
-				establishmentFilter.addEventListener('change', () => {
-					const selectedEstablishments = Array.from(establishmentFilter.selectedOptions)
-						.map(option => option.value);
-					const filteredData = data.filter(row => selectedEstablishments.includes(row['Reference Establishment']));
-					chart.data.labels = filteredData.map(row => row['Reference Establishment']);
-					chart.data.datasets[0].data = filteredData.map(row => row['Academic Year 2021-22']);
-					chart.update();
+
+				// Filter chart by establishment
+				filterSelect.addEventListener('change', event => {
+					const establishment = event.target.value;
+					if (establishment) {
+						chart.data.datasets.forEach(dataset => {
+							if (dataset.label === establishment) {
+								dataset.hidden = false;
+							} else {
+								dataset.hidden = true;
+							}
+						});
+						chart.update();
+					} else {
+						chart.data.datasets.forEach(dataset => {
+							dataset.hidden = false;
+						});
+						chart.update();
+					}
 				});
 			})
 			.catch(error => console.error(error));
-
-
 
    
    
