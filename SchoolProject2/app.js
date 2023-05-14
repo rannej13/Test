@@ -105,7 +105,7 @@
 // 			.catch(error => console.error(error));
 
 		// Fetch CSV data
-		fetch('file:///C:/Users/username/Desktop/data.csv')
+		fetch('https://github.com/rannej13/Test/blob/master/SchoolProject2/SchoolResultsAberdeen.csv')
 			.then(response => response.text())
 			.then(csvData => {
 				// Parse CSV data with Papa Parse
