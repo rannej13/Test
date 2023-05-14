@@ -105,6 +105,7 @@
 // 			.catch(error => console.error(error));
 
 		// Fetch CSV data
+window.onload = function() {
 		fetch('https://github.com/rannej13/Test/blob/master/SchoolProject2/SchoolResultsAberdeen.csv')
 			.then(response => response.text())
 			.then(csvData => {
@@ -190,6 +191,7 @@
 					}
 				});
 			})
+}
 			.catch(error => console.error(error));
 
    
