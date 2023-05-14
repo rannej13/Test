@@ -10,7 +10,7 @@ window.onload = function() {
       const establishments = [...new Set(parsedData.map(row => row['Reference Establishment']))];
 
       // Create a reference to the canvas element in the HTML
-      const canvas = document.getElementById('chart');
+      const canvas = document.getElementById('myChart');
 
       // Create a new Chart object and specify the type of chart
       const chart = new Chart(canvas, {
